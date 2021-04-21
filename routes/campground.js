@@ -6,10 +6,12 @@ const Campground = require('../models/campground.js')
 const { campgroundSchema, reviewSchema } = require('../schemas.js');
 const { isLoggedIn, isAuthor, validateCampground } = require('../middleware');
 const campgrounds = require('../controllers/campgrounds');
-
+const multer = require('multer')
+const { storage } = require('../cloudinary/index')
+const upload = multer({ storage })
 router.route('/')
     .get(catchAsync(campgrounds.index))
-    .post(isLoggedIn, validateCampground, catchAsync(campgrounds.createCamp))
+    .post(isLoggedIn,upload.array('image'),validateCampground,catchAsync(campgrounds.createCamp))
 
 router.get('/new', isLoggedIn, campgrounds.getcreate)
 

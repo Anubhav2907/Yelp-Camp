@@ -7,11 +7,16 @@ const { campgroundSchema, reviewSchema } = require('../schemas.js');
 const { isLoggedIn, isAuthor, validateCampground } = require('../middleware');
 const campgrounds = require('../controllers/campgrounds');
 
-router.get('/', catchAsync(campgrounds.index))
+router.route('/')
+    .get(catchAsync(campgrounds.index))
+    .post(isLoggedIn, validateCampground, catchAsync(campgrounds.createCamp))
+
 router.get('/new', isLoggedIn, campgrounds.getcreate)
-router.post('/', isLoggedIn, validateCampground, catchAsync(campgrounds.createCamp))
-router.get('/:id', catchAsync(campgrounds.viewCamp))
+
+router.route('/:id')
+    .get(catchAsync(campgrounds.viewCamp))
+    .put(validateCampground, isAuthor, catchAsync(campgrounds.edit))
+    .delete(isAuthor, catchAsync(campgrounds.delete))
+
 router.get('/:id/edit', isLoggedIn, isAuthor, catchAsync(campgrounds.editForm))
-router.put('/:id', validateCampground, isAuthor, catchAsync(campgrounds.edit))
-router.delete('/:id', isAuthor, catchAsync(campgrounds.delete))
 module.exports = router;

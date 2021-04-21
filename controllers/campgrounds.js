@@ -1,6 +1,4 @@
 const Campground = require('../models/campground.js')
-
-
 module.exports.index = async function (req, res) {
     const camps = await Campground.find({})
     res.render('campground/campground', { camps });

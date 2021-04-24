@@ -1,6 +1,8 @@
 const Campground = require('../models/campground.js')
-const {cloudinary} = require('../cloudinary/index')
-
+const { cloudinary } = require('../cloudinary/index')
+const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding')
+const mapBoxToken = process.env.MAPBOX_TOKEN;
+const geocoder = mbxGeocoding({ accessToken: mapBoxToken })
 module.exports.index = async function (req, res) {
     const camps = await Campground.find({})
     res.render('campground/campground', { camps });
@@ -9,13 +11,20 @@ module.exports.getcreate = function (req, res) {
     res.render('campground/new');
 }
 module.exports.createCamp = async function (req, res, next) {
-    const camp = new Campground(req.body.campground);
-    camp.images = req.files.map(f => ({ url: f.path, filename: f.filename }))
-    camp.author = req.user._id;
-    await camp.save();
-    console.log(camp);
-    req.flash('success', 'Successfully created a new campground');
-    res.redirect(`/campgrounds/${camp._id}`)
+    const geoData = await geocoder.forwardGeocode({
+        query: 'Delhi, India',
+        limit: 1
+    }).send()
+    console.log(geoData.body.features[0].geometry.coordinates)
+    res.send('geoData');
+    
+    // const camp = new Campground(req.body.campground);
+    // camp.images = req.files.map(f => ({ url: f.path, filename: f.filename }))
+    // camp.author = req.user._id;
+    // await camp.save();
+    // console.log(camp);
+    // req.flash('success', 'Successfully created a new campground');
+    // res.redirect(`/campgrounds/${camp._id}`)
 }
 module.exports.viewCamp = async function (req, res) {
     const { id } = req.params;
@@ -48,7 +57,7 @@ module.exports.edit = async function (req, res) {
     camp.images.push(...imgs)
     await camp.save();
     if (req.body.deleteImages) {
-        for(let file of req.body.deleteImages){
+        for (let file of req.body.deleteImages) {
             cloudinary.uploader.destroy(file);
         }
         await camp.updateOne({ $pull: { images: { filename: { $in: req.body.deleteImages } } } })

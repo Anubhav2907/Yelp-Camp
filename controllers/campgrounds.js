@@ -12,19 +12,17 @@ module.exports.getcreate = function (req, res) {
 }
 module.exports.createCamp = async function (req, res, next) {
     const geoData = await geocoder.forwardGeocode({
-        query: 'Delhi, India',
+        query: req.body.campground.location,
         limit: 1
-    }).send()
-    console.log(geoData.body.features[0].geometry.coordinates)
-    res.send('geoData');
-    
-    // const camp = new Campground(req.body.campground);
-    // camp.images = req.files.map(f => ({ url: f.path, filename: f.filename }))
-    // camp.author = req.user._id;
-    // await camp.save();
-    // console.log(camp);
-    // req.flash('success', 'Successfully created a new campground');
-    // res.redirect(`/campgrounds/${camp._id}`)
+    }).send()    
+    const camp = new Campground(req.body.campground);
+    camp.geometry = geoData.body.features[0].geometry
+    camp.images = req.files.map(f => ({ url: f.path, filename: f.filename }))
+    camp.author = req.user._id;
+    await camp.save();
+    console.log(camp);
+    req.flash('success', 'Successfully created a new campground');
+    res.redirect(`/campgrounds/${camp._id}`)
 }
 module.exports.viewCamp = async function (req, res) {
     const { id } = req.params;

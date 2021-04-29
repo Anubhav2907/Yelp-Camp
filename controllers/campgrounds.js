@@ -37,6 +37,7 @@ module.exports.viewCamp = async function (req, res) {
         req.flash('error', "Sorry, can't find that campground")
         res.redirect('/campgrounds')
     }
+    console.log(camp.geometry.coordinates)
     res.render('campground/show', { camp })
 }
 module.exports.editForm = async function (req, res) {

@@ -1,4 +1,4 @@
-const { default: bsCustomFileInput } = require("bs-custom-file-input")
+// const { default: bsCustomFileInput } = require("bs-custom-file-input")
 
 (function () {
     'use strict'

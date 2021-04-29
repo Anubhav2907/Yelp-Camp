@@ -32,7 +32,7 @@ module.exports.viewCamp = async function (req, res) {
             path: 'author'
         }
     }).populate('author');
-    // console.log(camp)
+    console.log(camp)
     if (!camp) {
         req.flash('error', "Sorry, can't find that campground")
         res.redirect('/campgrounds')

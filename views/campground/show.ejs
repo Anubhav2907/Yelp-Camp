@@ -2,7 +2,6 @@
     <link rel="stylesheet" href="/css/stars.css">
     <div class="row">
         <div class="col-6 mb-3">
-            <div id='map' style='width: 400px; height: 300px;'></div>
             <div class="card">
                 <div id="campgroundCarousel" class="carousel slide" data-ride="carousel">
                     <div class="carousel-inner">
@@ -55,6 +54,7 @@
                         </div>
             </div>
         </div>
+        <div id='map' style='width: 400px; height: 300px;'></div>
         <div class="col-6">
             <% if(currentUser){ %>
                 <h2>Leave a review</h2>
@@ -119,5 +119,7 @@
         const token = '<%-process.env.MAPBOX_TOKEN%>'
         const camp = <%-JSON.stringify(camp)%>
     </script>
-    <h1><%= camp.geometry.coordinates  %> </h1>
+    <h1>
+        <%= camp.geometry.coordinates %>
+    </h1>
     <script src="/js/map.js"></script>

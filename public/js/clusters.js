@@ -35,19 +35,21 @@ map.on('load', function () {
                 'step',
                 ['get', 'point_count'],
                 '#51bbd6',
-                100,
-                '#f1f075',
-                750,
-                '#f28cb1'
+                8,
+                '#f39189',
+                30,
+                'red'
             ],
             'circle-radius': [
                 'step',
                 ['get', 'point_count'],
+                12,
+                8,
+                15,
+                10,
                 20,
-                100,
                 30,
-                750,
-                40
+                25
             ]
         }
     });
@@ -101,6 +103,7 @@ map.on('load', function () {
     // the location of the feature, with
     // description HTML from its properties.
     map.on('click', 'unclustered-point', function (e) {
+        const text = e.features[0].properties.popUpMarkup; 
         var coordinates = e.features[0].geometry.coordinates.slice();
         var mag = e.features[0].properties.mag;
         var tsunami;
@@ -121,7 +124,7 @@ map.on('load', function () {
         new mapboxgl.Popup()
             .setLngLat(coordinates)
             .setHTML(
-                'magnitude: ' + mag + '<br>Was there a tsunami?: ' + tsunami
+                text
             )
             .addTo(map);
     });

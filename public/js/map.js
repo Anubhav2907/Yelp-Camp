@@ -5,6 +5,7 @@ var map = new mapboxgl.Map({
     center: camp.geometry.coordinates,
     zoom: 4
 });
+map.addControl(new mapboxgl.NavigationControl())
 new mapboxgl.Marker()
     .setLngLat(camp.geometry.coordinates)
     .setPopup(

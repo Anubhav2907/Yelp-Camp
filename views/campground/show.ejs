@@ -1,5 +1,6 @@
 <% layout('layouts/boilerplate') %>
     <link rel="stylesheet" href="/css/stars.css">
+    <link rel="stylesheet" href="/css/map.css">
     <div class="row">
         <div class="col-6 mb-3">
             <div class="card">
@@ -54,8 +55,8 @@
                         </div>
             </div>
         </div>
-        <div id='map' style='width: 400px; height: 300px;'></div>
         <div class="col-6">
+            <div id='map'></div>
             <% if(currentUser){ %>
                 <h2>Leave a review</h2>
                 <form action="/campgrounds/<%=camp._id%>/reviews" method="POST" class="mb-3 validated-form" novalidate>
@@ -119,7 +120,5 @@
         const token = '<%-process.env.MAPBOX_TOKEN%>'
         const camp = <%-JSON.stringify(camp)%>
     </script>
-    <h1>
-        <%= camp.geometry.coordinates %>
-    </h1>
+
     <script src="/js/map.js"></script>

@@ -1,6 +1,7 @@
-if(process.env.NODE_ENV !== "production"){
-    require('dotenv').config();
-}
+// if(process.env.NODE_ENV !== "production"){
+//     require('dotenv').config();
+// }
+require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const methodOverride = require('method-override');
@@ -22,26 +23,45 @@ const app = express();
 const passport = require('passport')
 const localstrategy = require('passport-local')
 const User = require('./models/user')
-mongoose.connect('mongodb://localhost:27017/yelp-camp', { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true, useFindAndModify: false, })
+const mongoSanitize = require('express-mongo-sanitize')
+const helmet = require('helmet')
+const MongoDBStore = require('connect-mongo')(session);
+const databaseURL = process.env.DB_URL || 'mongodb://localhost:27017/yelp-camp';
+const secret = process.env.SECRET || 'secret';
+mongoose.connect(databaseURL, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true, useFindAndModify: false, })
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, 'Connection error:'))
 db.once("open", function () {
     console.log('Database Connected');
 })
+const store = new MongoDBStore({
+    url: databaseURL,
+    secret,
+    touchAfter: 24*60*60
+});
+store.on('error', function(e){
+    console.log("OH NO!!! ERROR", e)
+})
 const sessionconfig = {
-    secret : 'mysecret',
+    store,
+    name : 'session',
+    secret,
     resave: false,
     saveUninitialized: true,
     cookie: {
+        httpOnly:true,
         expires: Date.now() + 1000*60*60*24*7,
         maxAge: 1000*60*60*24*7
-
     }
 }
 app.use(session(sessionconfig))
 app.use(flash())
 app.use(passport.initialize());
 app.use(passport.session())
+app.use(mongoSanitize());
+app.use(helmet({
+    contentSecurityPolicy:false
+}))
 passport.use(new localstrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
